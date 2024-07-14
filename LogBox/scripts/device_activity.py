@@ -9,15 +9,23 @@ INFO = {
     "description": "Logs CPU, Each CPU core, Memory, Swap, Network",
     "author": "LogBox",
     "version": "1.0",
+    "config_location": "device_activity",
     "dependencies": ["psutil"],
+}
+
+CONFIG = {
+    "sample_rate": 1,
+    "output": "device_activity",
 }
 
 import time
 import datetime
 import psutil
+from lib import config
 from lib import logging
 
 def main():
+    conf = config.load_config(INFO["config_location"], CONFIG)
     while True:
         data = {
             "time": datetime.datetime.now().isoformat() + "Z",
@@ -25,5 +33,5 @@ def main():
             "memory": psutil.virtual_memory().percent,
             "swap": psutil.swap_memory().percent,
         }
-        logging.insert("device_activity", data, ["time", "cpu", "memory", "swap"])
-        time.sleep(1)
+        logging.insert(conf["output"], data, ["time", "cpu", "memory", "swap"])
+        time.sleep(conf["sample_rate"])

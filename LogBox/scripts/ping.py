@@ -22,13 +22,15 @@ CONFIG = {
 
 import time
 import datetime
+from lib import config
 from lib import logging
 import subprocess
 
 def main():
+    conf = config.load_config(INFO["config_location"], CONFIG)
     while True:
         try:
-            output = subprocess.check_output(["ping", "-c", "1", CONFIG["host"]])
+            output = subprocess.check_output(["ping", "-c", "1", conf["host"]])
             latency = output.decode().split("time=")[1].split()[0]
         except Exception as e:
             latency = None
@@ -38,9 +40,9 @@ def main():
         }
         ping_loss = "Loss detected" if latency is None else "No loss"
         ping_loss_binary = 1 if latency is None else 0
-        logging.insert(CONFIG["output_2"], {"time": datetime.datetime.now().isoformat() + "Z", "ping_loss": ping_loss_binary}, ["time", "ping_loss_binary"])
-        logging.insert(CONFIG["output"], data, ["time", "latency"])
+        logging.insert(conf["output_2"], {"time": datetime.datetime.now().isoformat() + "Z", "ping_loss_binary": ping_loss_binary}, ["time", "ping_loss_binary"])
+        logging.insert(conf["output"], data, ["time", "latency"])
         if latency == None:
             pass
         else:
-            time.sleep(CONFIG["sample_rate"])
+            time.sleep(conf["sample_rate"])

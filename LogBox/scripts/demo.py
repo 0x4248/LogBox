@@ -9,19 +9,27 @@ INFO = {
     "description": "A simple metric that takes outputs random numbers logged every second",
     "author": "LogBox",
     "version": "1.0",
+    "config_location": "demo",
     "dependencies": [],
+}
+
+CONFIG = {
+    "sample_rate": 1,
+    "output": "demo",
 }
 
 import time
 import datetime
 import random
+from lib import config
 from lib import logging
 
 def main():
+    conf = config.load_config(INFO["config_location"], CONFIG)
     while True:
         data = {
             "time": datetime.datetime.now().isoformat() + "Z",
             "value": random.randint(0, 100),
         }
-        logging.insert("demo", data, ["time", "value"])
-        time.sleep(1)
+        logging.insert(conf["output"], data, ["time", "value"])
+        time.sleep(conf["sample_rate"])
