@@ -9,7 +9,7 @@ import sys
 import threading
 import importlib
 
-from lib.colour import Colours
+from .lib.colour import Colours 
 
 __MAIN__PATH = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(__MAIN__PATH)
